@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 #include <WiFi.h>
 
@@ -6,11 +8,11 @@ class Bulb {
 private:
     WiFiClient socket;
 
-    void writeBytes(uint8_t* msg, uint16_t length);
+    void writeBytes(const uint8_t* msg, const uint16_t length);
     
 public:
-    char ip[15];
     uint16_t port;
+    char ip[15];
     char id[32];
     char model[32];
 
@@ -24,11 +26,17 @@ public:
     // unused
     uint8_t* alpha = red+3;
 
+    Bulb(): port(0), ip("") {}
+
     Bulb(const char* ip) : port(5577) {
         strcpy(this->ip, ip);
     }
-    Bulb(const char* ip, uint16_t port) : port(port) {
+    Bulb(const char* ip, const uint16_t port) : port(port) {
         strcpy(this->ip, ip);
+    }
+
+    bool isValid() {
+        return port != 0;
     }
 
     void connect();
@@ -39,5 +47,9 @@ public:
     
     void turnOff();
 
-    void setColor(uint8_t r, uint8_t g, uint8_t b);
+    void setColor(const uint8_t r, const uint8_t g, const uint8_t b);
+
+    void setDefaultPattern(const uint8_t pattern, const uint8_t speed);
+
+    void setCustomPattern(const uint8_t* r, const uint8_t* g, const uint8_t* b, const uint8_t size, const uint8_t speed, const uint8_t transitionType);
 };
